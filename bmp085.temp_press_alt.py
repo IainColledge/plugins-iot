@@ -144,7 +144,7 @@ days, hours, minutes, seconds, microseconds = uptime()
 existing_tmp_file = tmp_file()
 
 #if (minutes == 59 and seconds < 30) or (not existing_tmp_file):
-if True:
+if 1 == 1:
     # Geolocate the IP
     try:
         response = requests.get(geoloc_api)
