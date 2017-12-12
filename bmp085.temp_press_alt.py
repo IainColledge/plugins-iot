@@ -173,7 +173,6 @@ if (minutes == 59 and seconds < 30) or (not existing_tmp_file):
                                "hPa set for lat:" + str(latitude) + ", lon:" + str(longitude) +
                                " using METAR from " + station + " at " + metar_time + " time")
                     syslog.syslog(syslog.LOG_INFO, message)
-                    print(message)
             except Exception, e:
                 syslog.syslog(syslog.LOG_WARNING,
                               "unable to get METAR for lat: " + str(latitude) + ", lon:" + str(longitude) + " : " + str(e))
