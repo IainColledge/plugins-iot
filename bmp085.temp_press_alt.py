@@ -154,7 +154,7 @@ try:
         longitude = jsondata["longitude"]
         try:
             # Get the nearest METAR
-            request_url = metar_api+"/"+latitude+","+longitude
+            request_url = metar_api +"/" + str(latitude) +"," + str(longitude)
             response = requests.get(request_url, params={'format': 'JSON'})
 
             print "URL " + request_url + " responded with " + response.content
