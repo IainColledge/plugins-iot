@@ -147,7 +147,7 @@ existing_tmp_file = tmp_file()
     # Geolocate the IP
 try:
     response = requests.get(geoloc_api)
-    print "Geo response " + response.status_code + "Output " + response.content
+    print "Geo response " + str(response.status_code) + "Output " + response.content
     if response.status_code == 200:
         jsondata = json.loads(response.content)
         latitude = jsondata["latitude"]
