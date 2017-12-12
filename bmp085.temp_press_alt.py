@@ -147,7 +147,7 @@ existing_tmp_file = tmp_file()
     # Geolocate the IP
 try:
     response = requests.get(geoloc_api)
-    print "Geo response " + str(response.status_code) + "Output " + response.content
+    print "Geo response " + str(response.status_code) + " Output " + response.content
     if response.status_code == 200:
         jsondata = json.loads(response.content)
         latitude = jsondata["latitude"]
@@ -178,9 +178,9 @@ try:
                 syslog.syslog(syslog.LOG_INFO, message)
                 print(message)
         except Exception, e:
+            print "unable to get METAR for lat: " + str(latitude) + ", lon:" + str(longitude) + " : " + str(e)
             syslog.syslog(syslog.LOG_WARNING,
-                          "unable to get METAR for lat: " + str(latitude) + ", lon:" + str(longitude) + " : " + str(
-                                  e))
+                          "unable to get METAR for lat: " + str(latitude) + ", lon:" + str(longitude) + " : " + str(e))
             # Use the last known good for sea level pressure for the next time period
             sea_level_pressure = get_cache()
     write_cache(sea_level_pressure)
