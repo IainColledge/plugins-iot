@@ -143,52 +143,47 @@ days, hours, minutes, seconds, microseconds = uptime()
 
 existing_tmp_file = tmp_file()
 
-#if (minutes == 59 and seconds < 30) or (not existing_tmp_file):
+if (minutes == 59 and seconds < 30) or (not existing_tmp_file):
     # Geolocate the IP
-try:
-    response = requests.get(geoloc_api)
-    print "Geo response " + str(response.status_code) + " Output " + response.content
-    if response.status_code == 200:
-        jsondata = json.loads(response.content)
-        latitude = jsondata["latitude"]
-        longitude = jsondata["longitude"]
-        try:
-            # Get the nearest METAR
-            request_url = metar_api +"/" + str(latitude) +"," + str(longitude)
-            response = requests.get(request_url, params={'format': 'JSON'})
+    try:
+        response = requests.get(geoloc_api)
+        if response.status_code == 200:
+            jsondata = json.loads(response.content)
+            latitude = jsondata["latitude"]
+            longitude = jsondata["longitude"]
+            try:
+                # Get the nearest METAR
+                request_url = metar_api +"/" + str(latitude) +"," + str(longitude)
+                response = requests.get(request_url, params={'format': 'JSON'})
 
-            print "URL " + request_url + " responded with " + response.content
-
-            if response.status_code == 200:
-                syslog.syslog(syslog.LOG_INFO, "URL " + request_url + " responded with " + response.content)
-                jsondata = json.loads(response.content)
-                altimeter = int(jsondata["Altimeter"])
-                altimeter_units = jsondata["Units"]["Altimeter"]
-                station = jsondata["Station"]
-                metar_time = jsondata["Time"]
-                # Convert fom inMg to hPa if inside US
-                if altimeter_units == "hPa":
-                    sea_level_pressure = altimeter
-                else:
-                    sea_level_pressure = altimeter * 33.86389
-                message = ("at uptime " + str(days) + ":" + str(hours) + ":" + str(minutes) + ":" + str(seconds) +
-                           " sea level pressure " + str(sea_level_pressure) +
-                           "hPa set for lat:" + str(latitude) + ", lon:" + str(longitude) +
-                           " using METAR from " + station + " at " + metar_time + " time")
-                syslog.syslog(syslog.LOG_INFO, message)
-                print(message)
-        except Exception, e:
-            print "unable to get METAR for lat: " + str(latitude) + ", lon:" + str(longitude) + " : " + str(e)
-            syslog.syslog(syslog.LOG_WARNING,
-                          "unable to get METAR for lat: " + str(latitude) + ", lon:" + str(longitude) + " : " + str(e))
-            # Use the last known good for sea level pressure for the next time period
-            sea_level_pressure = get_cache()
-    write_cache(sea_level_pressure)
-except Exception, e:
-    print "unable to get lat, long coords " + e.message
-    syslog.syslog(syslog.LOG_WARNING, "unable to get lat, long coords : " + str(e))
-#else:
-#    sea_level_pressure = get_cache()
+                if response.status_code == 200:
+                    syslog.syslog(syslog.LOG_INFO, "URL " + request_url + " responded with " + response.content)
+                    jsondata = json.loads(response.content)
+                    altimeter = int(jsondata["Altimeter"])
+                    altimeter_units = jsondata["Units"]["Altimeter"]
+                    station = jsondata["Station"]
+                    metar_time = jsondata["Time"]
+                    # Convert fom inMg to hPa if inside US
+                    if altimeter_units == "hPa":
+                        sea_level_pressure = altimeter
+                    else:
+                        sea_level_pressure = altimeter * 33.86389
+                    message = ("at uptime " + str(days) + ":" + str(hours) + ":" + str(minutes) + ":" + str(seconds) +
+                               " sea level pressure " + str(sea_level_pressure) +
+                               "hPa set for lat:" + str(latitude) + ", lon:" + str(longitude) +
+                               " using METAR from " + station + " at " + metar_time + " time")
+                    syslog.syslog(syslog.LOG_INFO, message)
+                    print(message)
+            except Exception, e:
+                syslog.syslog(syslog.LOG_WARNING,
+                              "unable to get METAR for lat: " + str(latitude) + ", lon:" + str(longitude) + " : " + str(e))
+                # Use the last known good for sea level pressure for the next time period
+                sea_level_pressure = get_cache()
+        write_cache(sea_level_pressure)
+    except Exception, e:
+        syslog.syslog(syslog.LOG_WARNING, "unable to get lat, long coords : " + str(e))
+else:
+    sea_level_pressure = get_cache()
 
 # Initialise the BMP085
 #
