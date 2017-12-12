@@ -52,8 +52,7 @@ metar_api = "http://avwx.rest/api/metar"
 # STD sea level pressure in hPa
 sea_level_pressure = 1013
 
-#syslog.openlog(logoption=syslog.LOG_DAEMON)
-syslog.openlog(logoption=syslog.LOG_INFO)
+syslog.openlog(logoption=syslog.LOG_DAEMON)
 
 def uptime():
     """
@@ -156,6 +155,8 @@ if (minutes == 59 and seconds < 30) or (not existing_tmp_file):
                 # Get the nearest METAR
                 request_url = metar_api+"/"+latitude+","+longitude
                 response = requests.get(request_url, params={'format': 'JSON'})
+
+                print "URL " + request_url + " responded with " + response.content
 
                 if response.status_code == 200:
                     syslog.syslog(syslog.LOG_INFO, "URL " + request_url + " responded with " + response.content)
