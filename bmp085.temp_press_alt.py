@@ -48,7 +48,7 @@ TMPFILE = 'bmp085.json'
 # IP Address Geolocation API
 geoloc_api = "https://freegeoip.net/json/"
 # METAR API
-metar_api = "http://avwx.rest/api/metar.php"
+metar_api = "http://avwx.rest/api/metar"
 # STD sea level pressure in hPa
 sea_level_pressure = 1013
 
@@ -154,7 +154,7 @@ if (minutes == 59 and seconds < 30) or (not existing_tmp_file):
             longitude = jsondata["longitude"]
             try:
                 # Get the nearest METAR
-                response = requests.get(metar_api, params={'lat': latitude, 'lon': longitude, 'format': 'JSON'})
+                response = requests.get(metar_api+"/"+latitude+","+longitude, params={'format': 'JSON'})
                 if response.status_code == 200:
                     jsondata = json.loads(response.content)
                     altimeter = int(jsondata["Altimeter"])
