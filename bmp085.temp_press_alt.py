@@ -185,6 +185,7 @@ try:
             sea_level_pressure = get_cache()
     write_cache(sea_level_pressure)
 except Exception, e:
+    print "unable to get lat, long coords" + str(e)
     syslog.syslog(syslog.LOG_WARNING, "unable to get lat, long coords : " + str(e))
 #else:
 #    sea_level_pressure = get_cache()
